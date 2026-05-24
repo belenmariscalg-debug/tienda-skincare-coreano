@@ -2,34 +2,55 @@
 session_start();
 include("conexion.php");
 
-if(isset($_POST['login'])){
+$mensaje = "";
 
+if(isset($_POST['login'])){
     $correo = $_POST['correo'];
     $password = $_POST['password'];
 
-    $sql = "SELECT * FROM usuarios
-            WHERE correo='$correo'
-            AND password='$password'";
-
+    $sql = "SELECT * FROM usuarios WHERE correo='$correo' AND password='$password'";
     $resultado = mysqli_query($conexion,$sql);
 
     if(mysqli_num_rows($resultado) > 0){
-
         $_SESSION['usuario'] = $correo;
-
         header("Location: index.php");
-
     }else{
-        echo "Datos incorrectos";
+        $mensaje = "<p style='color:red; margin-bottom:15px;'>Datos incorrectos</p>";
     }
 }
 ?>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Login | Skincare Coreano</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
 
-<form method="POST">
+<header>
+    <div class="logo">Skincare Coreano</div>
+    <nav>
+        <a href="index.php">Inicio</a>
+        <a href="carrito.php">Carrito</a>
+        <a href="login.php">Login</a>
+        <a href="registro.php">Registro</a>
+    </nav>
+</header>
 
-<input type="email" name="correo">
-<input type="password" name="password">
+<div class="contenedor-formulario">
+    <form class="formulario" method="POST">
+        <h2>Iniciar Sesión</h2>
+        <?php echo $mensaje; ?>
+        <input type="email" name="correo" placeholder="Tu Correo Electrónico" required>
+        <input type="password" name="password" placeholder="Tu Contraseña" required>
+        <button name="login">Entrar</button>
+    </form>
+</div>
 
-<button name="login">Entrar</button>
+<footer>
+    <p>© 2026 Skincare Coreano Shop</p>
+</footer>
 
-</form>
+</body>
+</html>
