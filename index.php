@@ -25,7 +25,8 @@ include("conexion.php");
     <nav>
 
         <a href="index.php">Inicio</a>
-        <a href="carrito.php">Carrito</a>
+        <?php $cart_count = isset($_SESSION['carrito']) && is_array($_SESSION['carrito']) ? count($_SESSION['carrito']) : 0; ?>
+        <a href="carrito.php">Carrito (<span id="cart-count"><?php echo $cart_count; ?></span>)</a>
 
         <?php
 
@@ -86,9 +87,7 @@ include("conexion.php");
 
             <p>$<?php echo $fila['precio']; ?></p>
 
-            <a href="agregar_carrito.php?id=<?php echo $fila['id']; ?>">
-                Agregar al carrito
-            </a>
+            <button class="btn-agregar" data-id="<?php echo $fila['id']; ?>">Agregar al carrito</button>
 
         </div>
 
@@ -105,6 +104,36 @@ include("conexion.php");
     <p>© 2026 Skincare Coreano Shop</p>
 
 </footer>
+
+<script>
+document.addEventListener('click', function(e){
+  if(e.target.matches('.btn-agregar')){
+    var btn = e.target;
+    var id = btn.getAttribute('data-id');
+    btn.disabled = true;
+    var original = btn.innerText;
+    btn.innerText = 'Añadiendo...';
+    fetch('agregar_carrito.php', {
+      method: 'POST',
+      headers: {'Content-Type':'application/x-www-form-urlencoded','X-Requested-With':'XMLHttpRequest','Accept':'application/json'},
+      body: 'id=' + encodeURIComponent(id)
+    }).then(function(res){ return res.json(); }).then(function(data){
+      if(data.success){
+        btn.innerText = 'Añadido';
+        var countEl = document.getElementById('cart-count');
+        if(countEl) countEl.innerText = data.count;
+        setTimeout(function(){ btn.innerText = original; btn.disabled = false; }, 1200);
+      } else {
+        btn.innerText = 'Error';
+        setTimeout(function(){ btn.innerText = original; btn.disabled = false; }, 1200);
+      }
+    }).catch(function(){
+      btn.innerText = 'Error';
+      setTimeout(function(){ btn.innerText = original; btn.disabled = false; }, 1200);
+    });
+  }
+});
+</script>
 
 </body>
 </html>

@@ -1,6 +1,19 @@
 <?php
 session_start();
 include("conexion.php");
+
+// Eliminar producto del carrito
+if(isset($_GET['eliminar'])){
+    $id_eliminar = $_GET['eliminar'];
+    foreach($_SESSION['carrito'] as $key => $id){
+        if($id == $id_eliminar){
+            unset($_SESSION['carrito'][$key]);
+            break;
+        }
+    }
+    header("Location: carrito.php");
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -33,15 +46,17 @@ include("conexion.php");
         <?php
         $total = 0;
         if(isset($_SESSION['carrito']) && !empty($_SESSION['carrito'])){
-            foreach($_SESSION['carrito'] as $id){
+            foreach($_SESSION['carrito'] as $key => $id){
                 $sql = "SELECT * FROM productos WHERE id=$id";
                 $resultado = mysqli_query($conexion, $sql);
                 $fila = mysqli_fetch_assoc($resultado);
                 
                 if($fila){
                     echo "<div class='item-carrito'>";
+                    echo "<img src='img/" . $fila['imagen'] . "' alt='" . $fila['nombre'] . "' style='width:80px; height:80px; object-fit:contain; border-radius:10px;'>";
                     echo "<span>" . $fila['nombre'] . "</span>";
                     echo "<span>$" . number_format($fila['precio'], 2) . "</span>";
+                    echo "<a href='carrito.php?eliminar=" . $id . "' class='btn-eliminar'>Eliminar</a>";
                     echo "</div>";
                     $total += $fila['precio'];
                 }
