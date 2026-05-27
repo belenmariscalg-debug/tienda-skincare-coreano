@@ -81,9 +81,10 @@ include("conexion.php");
 
         <div class="producto">
 
-            <img src="img/<?php echo $fila['imagen']; ?>">
-
-            <h3><?php echo $fila['nombre']; ?></h3>
+            <a href="producto.php?id=<?php echo $fila['id']; ?>" style="text-decoration: none; color: inherit; background-color: white; outline: none; border: none; display: block;">
+                <img src="img/<?php echo $fila['imagen']; ?>" alt="<?php echo $fila['nombre']; ?>">
+                <h3><?php echo $fila['nombre']; ?></h3>
+            </a>
 
             <p>$<?php echo $fila['precio']; ?></p>
 
